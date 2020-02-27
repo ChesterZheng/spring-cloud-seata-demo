@@ -90,11 +90,12 @@ public class CustomDynamicDataSourceAspectj {
 	}
 
 	/**
-	 * 通过方法的第一个字符串参数，动态设置数据源（非公用，只为订单库使用）
 	 * 
-	 * @author: wy
-	 * @time: 2018年1月10日 下午12:10:14
+	 * @Author Chester_Zheng
+	 * @Description 通过方法的第一个字符串参数，动态设置数据源（非公用，只为订单库使用）
+	 * @Date 2020年2月27日下午12:20:35
 	 * @param joinPoint
+	 * @ReturnType void
 	 */
 	private void setDataSoruceByMethodParam(JoinPoint joinPoint) {
 		Object[] args = joinPoint.getArgs();
