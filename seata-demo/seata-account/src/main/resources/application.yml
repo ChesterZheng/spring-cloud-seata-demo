@@ -1,0 +1,79 @@
+spring:
+  application:
+    name: seata-account
+  cloud:
+    alibaba:
+      seata:
+        tx-service-group: test_tx_group
+server:
+  port: 7062
+eureka:
+  client:
+    healthcheck:
+      enabled: true
+    service-url:
+      defaultZone: ${eureka.server}
+  instance:
+    hostname: localhost
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${server.port}}
+    lease-renewal-interval-in-seconds: 10
+    lease-expiration-duration-in-seconds: 30
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 30000
+        readTimeout: 30000
+  hystrix:
+    enabled: true
+  compression:
+    request:
+      enabled: true
+    response:
+      enabled: true
+ribbon:
+  ReadTimeout: 30000
+  SocketTimeout: 30000
+  ConnectTimeout: 2000
+  eureka:
+    enable: true
+hystrix:
+  fallbackcmd:
+    execution:
+      isolation:
+        thread:
+          timeoutInMilliseconds: 600000
+  threadpool:
+    default:
+      coreSize: 500
+  command:
+    default:
+      execution:
+        timeout:
+          enabled: true
+        isolation:
+          thread:
+            timeoutInMilliseconds: 30000
+logging:
+  level:
+    root: INFO
+    io.seata: INFO
+    com.test.mysql.dao: DEBUG
+seata:
+  enabled: true
+  application-id: seata-account
+  tx-service-group: test_tx_group
+  enable-auto-data-source-proxy: false
+  service:
+    vgroupMapping:
+      test_tx_group: seata-server
+    enable-degrade: false
+    disable-global-transaction: false
+  registry:
+    type: eureka
+    eureka:
+      service-url: ${eureka.server}
+    weight: 1
+  config:
+    type: file

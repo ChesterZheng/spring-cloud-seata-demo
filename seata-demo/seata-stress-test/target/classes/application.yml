@@ -1,0 +1,60 @@
+spring:
+  application:
+    name: seata-stress-test
+server:
+  port: 7090
+eureka:
+  client:
+    healthcheck:
+      enabled: true
+    service-url:
+      defaultZone: ${eureka.server}
+  instance:
+    hostname: localhost
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${server.port}}
+    #租期更新时间间隔(默认: 30s)
+    lease-renewal-interval-in-seconds: 10 
+    #租期到期时间(默认: 90s)
+    lease-expiration-duration-in-seconds: 30
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 30000
+        readTimeout: 30000
+  hystrix:
+    enabled: true
+  compression:
+    request:
+      enabled: true
+    response:
+      enabled: true
+ribbon:
+  ReadTimeout: 30000
+  SocketTimeout: 30000
+  ConnectTimeout: 2000
+  eureka:
+    enable: true
+hystrix:
+  fallbackcmd: 
+    execution: 
+      isolation: 
+        thread: 
+          timeoutInMilliseconds: 600000
+  threadpool:
+    default:
+      coreSize: 500
+  command:
+    default:  #default全局有效，service id指定应用有效
+      execution:
+        timeout:
+          #如果enabled设置为false，则请求超时交给ribbon控制,为true,则超时作为熔断根据
+          enabled: true
+        isolation:
+          thread:
+            timeoutInMilliseconds: 30000 #断路器超时时间，默认1000ms
+#Feign日志配置, 针对每一个FeginClient实例做配置
+logging:
+  level:
+    root: INFO

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper    
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"    
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.test.mysql.dao.IOrderDao">
+	<resultMap type="com.test.domain.Order" id="order">
+		<result column="ID" property="id" />
+		<result column="ORDER_ID" property="orderId" />
+		<result column="PRODUCT_ID" property="productId" />
+		<result column="PRODUCT_NAME" property="productName" />
+		<result column="CREATED_AT" property="createdAt" />
+		<result column="UPDATED_AT" property="updatedAt" />
+	</resultMap>
+
+	<sql id="table">ORDER</sql>
+
+	<insert id="insertOrder" parameterType="com.test.domain.Order"
+		useGeneratedKeys="true" keyColumn="ID" keyProperty="id">
+		<selectKey resultType="java.lang.Long" order="AFTER"
+			keyColumn="ID" keyProperty="id">
+			SELECT
+			LAST_INSERT_ID()
+		</selectKey>
+		INSERT INTO `ORDER${storeId}`
+		(
+		ORDER_ID,
+		PRODUCT_ID,
+		PRODUCT_NAME,
+		CREATED_AT
+		)
+		VALUES
+		(
+		#{order.orderId},
+		#{order.productId},
+		#{order.productName},
+		#{order.createdAt}
+		)
+	</insert>
+
+	<update id="updateOrder">
+		UPDATE ORDER
+		SET
+		UPDATED_AT = NOW()
+		WHERE
+		ID = #{id}
+		AND
+		ORDER_ID = #{orderId}
+	</update>
+
+</mapper>
