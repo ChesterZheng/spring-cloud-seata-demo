@@ -1,0 +1,86 @@
+spring:
+  application:
+    name: web
+  main: 
+    allow-bean-definition-overriding: true
+  cloud:
+    alibaba:
+      seata:
+        tx-service-group: 2ccm-tx-group
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        namespace: 6b4e16a7-b6c7-4342-994c-e7ca21b4022b
+        group: 2CCM-SEATA-GROUP
+server:
+  port: 7080
+  undertow:
+    max-http-post-size: 0
+    io-threads: 4
+    worker-threads: 32
+    buffer-size: 1024
+    direct-buffers: true
+ribbon:
+  ReadTimeout: 30000
+  SocketTimeout: 30000
+  ConnectTimeout: 2000
+  MaxAutoRetries: 1
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 30000
+        readTimeout: 30000
+  hystrix:
+    enabled: true
+  compression:
+    request:
+      enabled: true
+    response:
+      enabled: true
+hystrix:
+  fallbackcmd: 
+    execution: 
+      isolation: 
+        thread: 
+          timeoutInMilliseconds: 600000
+  threadpool:
+    default:
+      coreSize: 500
+  command:
+    default:  #default全局有效，service id指定应用有效
+      execution:
+        timeout:
+          #如果enabled设置为false，则请求超时交给ribbon控制,为true,则超时作为熔断根据
+          enabled: true
+        isolation:
+          thread:
+            timeoutInMilliseconds: 30000 #断路器超时时间，默认1000ms
+#Feign日志配置, 针对每一个FeginClient实例做配置
+logging:
+  level:
+    root: INFO
+    io.seata: INFO
+seata: 
+  enabled: true
+  application-id: web
+  tx-service-group: 2ccm-tx-group
+  client:
+    tm:
+      degradeCheck: true
+      degradeCheckAllowTimes: 10
+      degradeCheckPeriod: 2000
+  enable-auto-data-source-proxy: false
+  service:
+    vgroupMapping: 
+      2ccm-tx-group: default
+    enable-degrade: false
+    disable-global-transaction: false
+  registry:
+    type: nacos
+    nacos:
+      serverAddr: localhost:8848
+      namespace: 6b4e16a7-b6c7-4342-994c-e7ca21b4022b
+      group: 2CCM-SEATA-GROUP
+  config:
+    type: file

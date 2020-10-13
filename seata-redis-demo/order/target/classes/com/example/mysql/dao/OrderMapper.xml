@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper    
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"    
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mysql.dao.IOrderDao">
+	<resultMap type="com.example.domain.Order" id="order">
+		<result column="ID" property="id" />
+		<result column="ORDER_ID" property="orderId" />
+		<result column="PRODUCT_ID" property="productId" />
+		<result column="PRODUCT_NAME" property="productName" />
+		<result column="CREATED_AT" property="createdAt" />
+		<result column="UPDATED_AT" property="updatedAt" />
+	</resultMap>
+
+	<sql id="table">ORDER</sql>
+
+	<insert id="initialize">
+		CREATE TABLE `TEST_ORDER${storeId}` (
+		`ID`
+		bigint(20) NOT NULL
+		AUTO_INCREMENT ,
+		`STORE_ID` bigint(20) NULL DEFAULT
+		NULL COMMENT '店铺ID'
+		,
+		`PRODUCT_ID` bigint(20) NULL DEFAULT NULL COMMENT
+		'商品ID' ,
+		`SKU`
+		varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci
+		NULL DEFAULT
+		NULL COMMENT 'sku' ,
+		`NAME` varchar(255) CHARACTER SET utf8
+		COLLATE
+		utf8_general_ci NULL DEFAULT
+		NULL COMMENT '商品名称' ,
+		`BRAND_ID`
+		bigint(20)
+		NULL DEFAULT NULL COMMENT '品牌ID' ,
+		`COLOR` varchar(255)
+		CHARACTER SET
+		utf8 COLLATE utf8_general_ci NULL DEFAULT
+		NULL COMMENT
+		'颜色' ,
+		`MAIN_CATEGORY_ID` tinyint(2) NULL DEFAULT NULL COMMENT '主分类ID'
+		,
+		`SUB_CATEGORY_ID` tinyint(2) NULL DEFAULT NULL COMMENT '子分类ID' ,
+		`PRODUCT_IMAGES` varchar(1000) CHARACTER SET utf8 COLLATE
+		utf8_general_ci NULL DEFAULT
+		NULL COMMENT '商品图片' ,
+		`DESCRIPTION`
+		varchar(1000) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT
+		NULL COMMENT '商品描述(英文)' ,
+		`DESCRIPTION_CN` varchar(1000) CHARACTER SET
+		utf8 COLLATE utf8_general_ci NULL DEFAULT
+		NULL COMMENT '商品描述(中文)' ,
+		`TAG` varchar(1000) CHARACTER SET utf8 COLLATE utf8_general_ci NULL
+		DEFAULT
+		NULL COMMENT '标签' ,
+		`KEYWORDS` varchar(1000) CHARACTER SET utf8
+		COLLATE utf8_general_ci NULL DEFAULT
+		NULL COMMENT '关键字' ,
+		`STATUS`
+		tinyint(1) NULL DEFAULT NULL COMMENT '0(下架) 1(上架) 2(预售) 3(审核未通过)
+		4(逻辑删除)' ,
+		`GENDER` tinyint(1) NULL DEFAULT NULL COMMENT '性别' ,
+		`ALL_SIZES` varchar(1000) CHARACTER SET utf8 COLLATE utf8_general_ci
+		NULL DEFAULT
+		NULL COMMENT '所有尺码' ,
+		`SUGGESTED_PRICE` decimal(10,2) NULL
+		DEFAULT NULL COMMENT '建议销售价' ,
+		`LOWEST_PRICE` decimal(10,2) NULL
+		DEFAULT NULL COMMENT '最低销售价' ,
+		`SUPPLY_PRICE` decimal(10,2) NULL
+		DEFAULT NULL COMMENT '进价(App平台销售价)' ,
+		`SALE_VOLUME` bigint(20) NULL
+		DEFAULT NULL COMMENT '销量' ,
+		`IS_DISCOUNT` tinyint(1) NULL DEFAULT NULL
+		COMMENT '是否打折' ,
+		`BATCH_ID` varchar(255) CHARACTER SET utf8 COLLATE
+		utf8_general_ci NULL DEFAULT
+		NULL COMMENT '批次ID' ,
+		`SOURCE` tinyint(1)
+		NULL DEFAULT NULL COMMENT '商品来源(1: 新建商品; 2: 2ccm商品库; 3:
+		关注店铺导入)' ,
+		`IS_SHIPPING_FREE` tinyint(1) NULL DEFAULT NULL COMMENT '是否包邮' ,
+		`SHIPPING_FEE` int(10) NULL DEFAULT NULL COMMENT '国外运费' ,
+		`SHIPPING_FEE_CN` int(10) NULL DEFAULT NULL COMMENT '国内运费' ,
+		`SHIPPING_FEE_WEIGHT` int(10) NULL DEFAULT NULL COMMENT '运费权重' ,
+		`CREATED_AT` datetime NULL DEFAULT NULL COMMENT '创建时间' ,
+		`UPDATED_AT`
+		datetime NULL DEFAULT NULL COMMENT '更新时间' ,
+		PRIMARY KEY (`ID`),
+		INDEX
+		`INDEX_PRODUCT_ID` (`PRODUCT_ID`) USING BTREE ,
+		INDEX `INDEX_BRAND_ID`
+		(`BRAND_ID`) USING BTREE ,
+		INDEX `INDEX_MAIN_CATEGORY_ID`
+		(`MAIN_CATEGORY_ID`) USING BTREE ,
+		INDEX `INDEX_SUB_CATEGORY_ID`
+		(`SUB_CATEGORY_ID`) USING BTREE ,
+		INDEX `INDEX_STATUS` (`STATUS`) USING
+		BTREE ,
+		INDEX `INDEX_GENDER` (`GENDER`) USING BTREE ,
+		INDEX
+		`INDEX_SUGGESTED_PRICE` (`SUGGESTED_PRICE`) USING BTREE ,
+		INDEX
+		`INDEX_LOWEST_PRICE` (`LOWEST_PRICE`) USING BTREE ,
+		INDEX
+		`INDEX_SUPPLY_PRICE` (`SUPPLY_PRICE`) USING BTREE ,
+		INDEX
+		`INDEX_BATCH_ID` (`BATCH_ID`) USING BTREE ,
+		INDEX `INDEX_SOURCE`
+		(`SOURCE`) USING BTREE ,
+		INDEX `INDEX_CREATED_AT` (`CREATED_AT`) USING
+		BTREE ,
+		INDEX `INDEX_UPDATED_AT` (`UPDATED_AT`) USING BTREE
+		)
+		ENGINE=InnoDB
+		DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
+		AUTO_INCREMENT=1
+		ROW_FORMAT=DYNAMIC
+		COMMENT='店铺商品表(分表)';
+	</insert>
+
+	<insert id="insertOrder" parameterType="com.example.domain.Order"
+		useGeneratedKeys="true" keyColumn="ID" keyProperty="id">
+		<selectKey resultType="java.lang.Long" order="AFTER"
+			keyColumn="ID" keyProperty="id">
+			SELECT
+			LAST_INSERT_ID()
+		</selectKey>
+		INSERT INTO `ORDER${storeId}`
+		(
+		ORDER_ID,
+		PRODUCT_ID,
+		PRODUCT_NAME,
+		CREATED_AT
+		)
+		VALUES
+		(
+		#{order.orderId},
+		#{order.productId},
+		#{order.productName},
+		#{order.createdAt}
+		)
+	</insert>
+
+	<update id="updateOrder">
+		UPDATE ORDER
+		SET
+		UPDATED_AT = NOW()
+		WHERE
+		ID = #{id}
+		AND
+		ORDER_ID = #{orderId}
+	</update>
+
+</mapper>

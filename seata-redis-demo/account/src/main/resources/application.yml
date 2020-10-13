@@ -1,0 +1,50 @@
+spring:
+  application:
+    name: account
+  main:    allow-bean-definition-overriding: true
+  cloud:
+    alibaba:      seata:        tx-service-group: 2ccm-tx-group
+    nacos:      discovery:        server-addr: localhost:8848
+        namespace: 6b4e16a7-b6c7-4342-994c-e7ca21b4022b
+        group: 2CCM-SEATA-GROUP
+server:
+  port: 8020
+  undertow:
+    max-http-post-size: 0
+    io-threads: 4
+    worker-threads: 32
+    buffer-size: 1024
+    direct-buffers: true
+ribbon:
+  ReadTimeout: 30000
+  SocketTimeout: 30000
+  ConnectTimeout: 2000
+  MaxAutoRetries: 1
+logging:
+  level:
+    root: INFO
+    io.seata: INFO
+    com.example.mysql.dao: DEBUG
+seata:
+  enabled: true
+  application-id: account
+  tx-service-group: 2ccm-tx-group
+  client:
+    rm:
+      lock:
+        retry-times: 5
+        retry-interval: 10
+  service:
+    vgroupMapping:
+      2ccm-tx-group: default
+    enable-degrade: false
+    disable-global-transaction: false
+  registry:
+    type: nacos
+    nacos:
+      serverAddr: localhost:8848
+      namespace: 6b4e16a7-b6c7-4342-994c-e7ca21b4022b
+      group: 2CCM-SEATA-GROUP
+  config:
+    type: file
+ 
